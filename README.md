@@ -13,7 +13,7 @@
 |---|---|---|
 | Task 1 | Exploratory Data Analysis (EDA) | ✅ Complete |
 | Task 2 | Clinical Predictive Modeling | ✅ Complete |
-| Task 3 | Model Optimization + Explainability | 🔜 Upcoming |
+| Task 3 | Treatment Effect Analysis + Causal Inference | ✅ Complete |
 | Task 4 | Clinical Dashboard + Deployment | 🔜 Upcoming |
 
 ---
@@ -28,7 +28,9 @@ Month2/
 ├── Task2/
 │   ├── healthcare_task2.ipynb   ← ML modeling notebook
 │   └── ss/                      ← 6 chart screenshots
-├── Task3/                        ← Coming soon
+├── Task3/
+│   ├── healthcare_task3.ipynb   ← Causal inference notebook
+│   └── ss/                      ← 9 chart screenshots
 └── Task4/                        ← Coming soon
 ```
 
@@ -142,14 +144,65 @@ Month2/
 
 ---
 
-## Task 3 — Model Optimization + Explainability *(Upcoming)*
+## Task 3 — Treatment Effect Analysis + Causal Inference
 
-**Planned:**
-- Hyperparameter tuning (GridSearchCV / RandomizedSearchCV)
-- SHAP explainability — per-patient feature contribution plots
-- Threshold optimization (Precision-Recall curve analysis)
-- Cross-validation refinement
-- Final model calibration
+**File:** `Task3/healthcare_task3.ipynb`
+**Objective:** Estimate the causal effect of clinical interventions on diabetes outcomes using multiple causal inference methods — going beyond correlation to quantify actual treatment benefit, identify which patients benefit most, and assess cost-effectiveness.
+
+### Notebook Structure (33 cells — 15 code + 18 markdown)
+
+| Section | Type | Purpose |
+|---|---|---|
+| Environment Setup | Markdown + Code | Library imports |
+| Data Quality Analysis | Markdown + Code | Null audit, zero imputation, outliers, clinical plausibility |
+| Step 1: Data Prep + Treatment Definition | Markdown + Code | High-glucose treatment (≥140 mg/dL), binary outcome |
+| Step 2: Propensity Score Modeling | Markdown + Code | Logistic regression PS; overlap verification |
+| Step 3: PSM (Nearest Neighbor) | Markdown + Code | 1:1 matching; covariate balance Love plot |
+| Step 4: IPW (Stabilised IPTW) | Markdown + Code | Reweighting; 99th-pct weight trimming |
+| Step 5: ATE / ATT / ATC | Markdown + Code | Three causal estimands; outcome regression |
+| Bootstrap Statistical Significance | Markdown + Code | 1000 resamples; 95% CI; p-value; Z-stat; distribution plot |
+| Step 6: Heterogeneous Treatment Effect | Markdown + Code | Age / BMI / Glucose subgroup analysis |
+| Step 7: Uplift Modeling (S-Learner) | Markdown + Code | Individual treatment effect scores; 4-tier targeting |
+| Step 8: Difference-in-Differences | Markdown + Code | Pre/post simulation; parallel trends verification |
+| Step 9: Clinical Trial Simulation | Markdown + Code | Power analysis; RCT sample size calculation |
+| Step 10: Cost-Effectiveness (CEA) | Markdown + Code | ICER, QALY, sensitivity analysis |
+| Clinical Insights | Markdown | Who benefits most; NNT; hospital usage guide |
+| Causal Assumptions | Markdown | Ignorability, Overlap, SUTVA — formal assessment |
+| Limitations | Markdown | 6 items with severity ratings |
+| Executive Summary | Markdown | Key findings; business impact; final recommendation |
+
+### Key Findings
+- **ATE statistically significant** — Bootstrap 95% CI excludes zero; p < 0.05 (1000 resamples)
+- **Three estimators converge** — PSM, IPW, and outcome regression produce consistent ATE direction
+- **HTE:** Patients aged 41–60, BMI 25–35, pre-diabetic glucose (100–125 mg/dL) benefit most
+- **NNT ≈ 12–13** — treating 12–13 high-risk patients prevents 1 diabetes case
+- **Cost-effective** — ICER well below WHO willingness-to-pay threshold (~$50,000/QALY)
+- **RCT design** — ~400 patients (200/arm) needed at 80% power to confirm causally
+
+### Causal Methods Used
+| Method | Package | Notes |
+|---|---|---|
+| Propensity Score Modeling | scikit-learn | Logistic Regression on 7 confounders |
+| PSM (Nearest Neighbor) | NumPy/SciPy | Manual 1:1 matching — no causalml dependency |
+| IPW (Stabilised IPTW) | NumPy | 99th-percentile weight trimming |
+| Bootstrap CI + p-value | NumPy | 1000 resamples, percentile method, two-sided test |
+| S-Learner Uplift | scikit-learn | Random Forest base model |
+| Difference-in-Differences | NumPy | Synthetic pre/post simulation |
+| Power Analysis | SciPy | Two-proportion z-test |
+| ICER / QALY | NumPy | Cost model with sensitivity analysis |
+
+### Charts Generated
+| Chart | Description |
+|---|---|
+| `01_propensity_scores.png` | PS distribution — treated vs control overlap |
+| `02_psm_balance.png` | Covariate balance before/after PSM (Love plot / SMD) |
+| `03_ate_comparison.png` | ATE / ATT / ATC comparison bar chart |
+| `bootstrap_ate.png` | Bootstrap ATE distribution with 95% CI shading |
+| `04_hte_subgroups.png` | HTE subgroup effects — Age, BMI, Glucose |
+| `05_uplift_distribution.png` | Individual uplift score histogram |
+| `06_did_trends.png` | DiD parallel trends — pre/post outcome trajectories |
+| `07_power_curve.png` | Power curve — sample size vs statistical power |
+| `08_icer_sensitivity.png` | ICER tornado plot — sensitivity analysis |
 
 ---
 
@@ -177,6 +230,9 @@ jupyter notebook Task1/healthcare_task1.ipynb
 
 # Run Task 2
 jupyter notebook Task2/healthcare_task2.ipynb
+
+# Run Task 3
+jupyter notebook Task3/healthcare_task3.ipynb
 ```
 
 ---
