@@ -7,6 +7,18 @@
 
 ---
 
+> ## ⚠️ Important Disclaimer — Read Before Evaluating
+>
+> **"This system demonstrates a full healthcare analytics pipeline including prediction, causal inference, and deployment strategy. Due to dataset limitations, results are simulated but methodology is industry-aligned."**
+>
+> - The Pima Indians Diabetes Dataset (1988) is a research/educational dataset — it does not represent a modern clinical population
+> - The treatment variable in Task 3 is synthetically defined (Glucose ≥ 140 mg/dL as a proxy) — it is not a real randomised clinical assignment
+> - All causal effect estimates (ATE, NNT, ICER) are methodologically valid but should be interpreted as illustrative, not clinically prescriptive
+> - The dashboard (Task 4) uses data derived from the same dataset — figures are representative, not live hospital data
+> - **The methodology, pipeline architecture, and analytical approach are industry-aligned and production-ready**
+
+---
+
 ## Project Progress
 
 | Task | Title | Status |
@@ -14,7 +26,7 @@
 | Task 1 | Exploratory Data Analysis (EDA) | ✅ Complete |
 | Task 2 | Clinical Predictive Modeling | ✅ Complete |
 | Task 3 | Treatment Effect Analysis + Causal Inference | ✅ Complete |
-| Task 4 | Clinical Dashboard + Deployment | 🔜 Upcoming |
+| Task 4 | Clinical Dashboard + Deployment (OneSelf HealthAI) | ✅ Complete |
 
 ---
 
@@ -31,7 +43,11 @@ Month2/
 ├── Task3/
 │   ├── healthcare_task3.ipynb   ← Causal inference notebook
 │   └── ss/                      ← 9 chart screenshots
-└── Task4/                        ← Coming soon
+└── Task4/
+    └── healthcare-dashboard/    ← Next.js 14 clinical dashboard
+        ├── app/                 ← 5 pages (Overview, Patients, Insights, Ethics, Deployment)
+        ├── components/          ← Reusable UI components
+        └── lib/                 ← Clinical data layer
 ```
 
 ---
@@ -191,48 +207,73 @@ Month2/
 | Power Analysis | SciPy | Two-proportion z-test |
 | ICER / QALY | NumPy | Cost model with sensitivity analysis |
 
-### Charts Generated
-| Chart | Description |
+---
+
+## Task 4 — Clinical Dashboard (OneSelf HealthAI)
+
+**Directory:** `Task4/healthcare-dashboard/`
+**Tech Stack:** Next.js 14 · TypeScript · Tailwind CSS · Recharts
+**Objective:** Build a production-quality clinical analytics dashboard that visualises all findings from Tasks 1–3 as a real-time BI-style interface — covering patient monitoring, model insights, ethics & fairness, and deployment strategy.
+
+### Pages & Features
+
+| Page | Route | What It Shows |
+|---|---|---|
+| **Overview** | `/` | KPI cards (animated), monthly trends area chart, risk tier pie chart, model AUC bar chart, prevalence by age, live alert feed |
+| **Patient Monitor** | `/patients` | Searchable patient table, per-patient risk detail panel, interactive risk calculator with radar chart |
+| **Model Insights** | `/insights` | ATE estimator comparison (IPW/PSM/OR), bootstrap distribution histogram, feature importance bar chart, full model comparison table |
+| **Ethics & Fairness** | `/ethics` | Demographic parity chart, ethics scorecard radar, SHAP explainability waterfall, bias documentation |
+| **Deployment & ROI** | `/deployment` | ROI projection chart, 4-phase implementation roadmap, security protocols, regulatory compliance checklist, stakeholder recommendations |
+
+### Dashboard Highlights
+- **Live alert feed** — critical/high/medium patient alerts with one-click resolution
+- **Interactive risk calculator** — 6 clinical sliders → instant risk probability + radar chart
+- **Bootstrap ATE visualisation** — 95% CI and null hypothesis line on histogram
+- **SHAP explainability** — per-patient feature contribution waterfall for clinician trust
+- **Ethics scorecard** — 6-dimension radar covering fairness, calibration, explainability
+- **4-phase roadmap** — Pilot → EHR Integration → Full Deployment → Scale & Optimise
+- **Regulatory checklist** — HIPAA, GDPR, FDA SaMD, ISO 13485, HL7 FHIR, ADA Guidelines
+
+### How to Run Task 4
+
+```bash
+cd Task4/healthcare-dashboard
+npm install
+npm run dev
+# Open http://localhost:3000
+```
+
+### Task 4 Tech Stack
+
+| Category | Tools |
 |---|---|
-| `01_propensity_scores.png` | PS distribution — treated vs control overlap |
-| `02_psm_balance.png` | Covariate balance before/after PSM (Love plot / SMD) |
-| `03_ate_comparison.png` | ATE / ATT / ATC comparison bar chart |
-| `bootstrap_ate.png` | Bootstrap ATE distribution with 95% CI shading |
-| `04_hte_subgroups.png` | HTE subgroup effects — Age, BMI, Glucose |
-| `05_uplift_distribution.png` | Individual uplift score histogram |
-| `06_did_trends.png` | DiD parallel trends — pre/post outcome trajectories |
-| `07_power_curve.png` | Power curve — sample size vs statistical power |
-| `08_icer_sensitivity.png` | ICER tornado plot — sensitivity analysis |
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Charts | Recharts (AreaChart, BarChart, PieChart, RadarChart) |
+| Icons | Lucide React |
+| Build | Static export ready — deployable to Vercel / AWS / GCP |
 
 ---
 
-## Task 4 — Clinical Dashboard + Deployment *(Upcoming)*
-
-**Planned:**
-- Interactive patient risk calculator
-- Streamlit clinical dashboard
-- REST API for EHR integration
-- Final project report
-
----
-
-## How to Run
+## How to Run All Tasks
 
 ```bash
 # Clone the repo
 git clone https://github.com/vallabhsangar12/VISM2-Healthcare_Analytics.git
+cd VISM2-Healthcare_Analytics/Month2
 
-# Install dependencies
+# ── Python notebooks (Tasks 1–3) ──────────────────────────────────────────
 pip install pandas numpy matplotlib seaborn scipy scikit-learn jupyter
 
-# Run Task 1
-jupyter notebook Task1/healthcare_task1.ipynb
+jupyter notebook Task1/healthcare_task1.ipynb   # EDA
+jupyter notebook Task2/healthcare_task2.ipynb   # Predictive Modeling
+jupyter notebook Task3/healthcare_task3.ipynb   # Causal Inference
 
-# Run Task 2
-jupyter notebook Task2/healthcare_task2.ipynb
-
-# Run Task 3
-jupyter notebook Task3/healthcare_task3.ipynb
+# ── Next.js Dashboard (Task 4) ────────────────────────────────────────────
+cd Task4/healthcare-dashboard
+npm install
+npm run dev   # http://localhost:3000
 ```
 
 ---
@@ -246,14 +287,18 @@ License: Public domain — research/educational use
 
 ---
 
-## Tech Stack
+## Full Tech Stack
 
 | Category | Tools |
 |---|---|
-| Language | Python 3.12 |
+| Language (Analysis) | Python 3.12 |
+| Language (Dashboard) | TypeScript |
 | Data Processing | Pandas, NumPy |
-| Visualization | Matplotlib, Seaborn |
+| Visualization (Notebooks) | Matplotlib, Seaborn |
+| Visualization (Dashboard) | Recharts |
 | Machine Learning | Scikit-learn |
 | Statistical Testing | SciPy |
+| Frontend Framework | Next.js 14 |
+| Styling | Tailwind CSS |
 | Notebook | Jupyter |
 | Version Control | Git + GitHub |
